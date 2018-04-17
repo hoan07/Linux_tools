@@ -1,0 +1,167 @@
+
+" general plugins {{{
+
+Plug 'morhetz/gruvbox'
+
+" Vim buffer tab
+" ---------------------------------------------------
+Plug 'ap/vim-buftabline'
+
+" Neovim deoplete"
+" ---------------------------------------------------
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#file#enable_buffer_path = 1
+let g:deoplete#enable_smart_case = 1
+let g:python3_host_prog = '/usr/bin/python3'
+let g:python2_host_prog = '/usr/bin/python'
+
+Plug 'zchee/deoplete-jedi', { 'do': ':UpdateRemotePlugins' }
+" g:deoplete#sources#jedi#python_path = ''
+" g:deoplete#sources#jedi#extra_path = ''
+
+" Completion from other opened files
+Plug 'Shougo/context_filetype.vim'
+
+" Goto feature for python
+Plug 'davidhalter/jedi-vim'
+let g:jedi#completions_enabled = 0
+
+" Navigate for tmux and subwindows
+Plug 'christoomey/vim-tmux-navigator'
+
+" Indent line
+" ---------------------------------------------------
+Plug 'Yggdroot/indentLine'
+" Vim
+let g:indentLine_color_term = 239
+"GVim
+let g:indentLine_color_gui = '#A4E57E'
+" none X terminal
+let g:indentLine_color_tty_light = 7 " (default: 4)
+let g:indentLine_color_dark = 1 " (default: 2)
+" let g:indentLine_char = '.'
+
+" auto close bracket
+" ---------------------------------------------------
+Plug 'jiangmiao/auto-pairs'
+
+" Tagbar
+" --------------------------------------------------
+Plug 'majutsushi/tagbar'
+nmap <F4> :TagbarToggle<CR>
+
+" nerdtree: invoke by :NERDTreeToggle
+" ---------------------------------------------------
+Plug 'scrooloose/nerdtree'
+let g:NERDTreeDirArrows = 0
+let g:NERDTreeWinSize = 30
+let g:NERDTreeMouseMode = 1
+let g:NERDTreeMapToggleZoom = '<Space>'
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+let NERDTreeIgnore = ['\.pyc$']
+map <leader>e :NERDTreeToggle<cr>
+
+autocmd WinEnter * call s:CloseIfOnlyNerdTreeLeft()
+
+" Close all open buffers on entering a window if the only
+" buffer that's left is the NERDTree buffer
+function! s:CloseIfOnlyNerdTreeLeft()
+    if exists("t:NERDTreeBufName")
+        if bufwinnr(t:NERDTreeBufName) != -1
+            if winnr("$") == 1
+                q
+            endif
+        endif
+    endif
+endfunction
+
+" nerdcommenter: invoke by <leader>c<space>, <leader>cl, <leader>cu, <F11> or <C-F11>
+" ---------------------------------------------------
+Plug 'scrooloose/nerdcommenter'
+
+let g:NERDSpaceDelims = 1
+let g:NERDRemoveExtraSpaces = 1
+let g:NERDCustomDelimiters = {
+            \ 'vimentry': { 'left': '--' },
+            \ }
+map <leader>m <plug>NERDCommenterToggle
+
+" Auto Format
+" ---------------------------------------------------
+Plug 'Chiel92/vim-autoformat'
+
+" LargeFile
+" ---------------------------------------------------
+Plug 'vim-scripts/LargeFile'
+let g:LargeFile= 5 " files >= 5MB will use LargeFile rules
+
+" Close buffer without close windows
+" ---------------------------------------------------
+
+"here is a more exotic version of my original Kwbd script
+"delete the buffer; keep windows; create a scratch buffer if no buffers left
+function s:Kwbd(kwbdStage)
+    if(a:kwbdStage == 1)
+        if(!buflisted(winbufnr(0)))
+            bd!
+            return
+        endif
+        let s:kwbdBufNum = bufnr("%")
+        let s:kwbdWinNum = winnr()
+        windo call s:Kwbd(2)
+        execute s:kwbdWinNum . 'wincmd w'
+        let s:buflistedLeft = 0
+        let s:bufFinalJump = 0
+        let l:nBufs = bufnr("$")
+        let l:i = 1
+        while(l:i <= l:nBufs)
+            if(l:i != s:kwbdBufNum)
+                if(buflisted(l:i))
+                    let s:buflistedLeft = s:buflistedLeft + 1
+                else
+                    if(bufexists(l:i) && !strlen(bufname(l:i)) && !s:bufFinalJump)
+                        let s:bufFinalJump = l:i
+                    endif
+                endif
+            endif
+            let l:i = l:i + 1
+        endwhile
+        if(!s:buflistedLeft)
+            if(s:bufFinalJump)
+                windo if(buflisted(winbufnr(0))) | execute "b! " . s:bufFinalJump | endif
+        else
+            enew
+            let l:newBuf = bufnr("%")
+            windo if(buflisted(winbufnr(0))) | execute "b! " . l:newBuf | endif
+    endif
+    execute s:kwbdWinNum . 'wincmd w'
+endif
+if(buflisted(s:kwbdBufNum) || s:kwbdBufNum == bufnr("%"))
+    execute "bd! " . s:kwbdBufNum
+endif
+if(!s:buflistedLeft)
+    set buflisted
+    set bufhidden=delete
+    set buftype=
+    setlocal noswapfile
+endif
+  else
+      if(bufnr("%") == s:kwbdBufNum)
+          let prevbufvar = bufnr("#")
+          if(prevbufvar > 0 && buflisted(prevbufvar) && prevbufvar != s:kwbdBufNum)
+              b #
+          else
+              bn
+          endif
+      endif
+  endif
+endfunction
+
+command! Kwbd call s:Kwbd(1)
+nnoremap <silent> <Plug>Kwbd :<C-u>Kwbd<CR>
+
+" Create a mapping (e.g. in your .vimrc) like this:
+nnoremap <silent> <Leader>bd :Kwbd<CR>
+
+"}}}
