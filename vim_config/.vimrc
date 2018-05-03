@@ -4,9 +4,9 @@ set clipboard=unnamed
 " vim-plug
 " /////////////////////////////////////////////////////////////////////////////
 
-call plug#begin('~/.config/nvim/bundle')
+call plug#begin('$HOME/.vim/bundle')
 
-let vimrc_plugins_path = '~/.config/nvim/sysinit.plugins'
+let vimrc_plugins_path = '$HOME/.vim/.vimrc.plugin'
 
 if filereadable(expand(vimrc_plugins_path))
     exec 'source ' . fnameescape(vimrc_plugins_path)
@@ -16,10 +16,12 @@ call plug#end()
 
 set background=dark
 colorscheme gruvbox
-
+set guifont=DejaVu\ Sans\ Mono\ 13
 " /////////////////////////////////////////////////////////////////////////////
 " General
 " /////////////////////////////////////////////////////////////////////////////
+
+set tags=.tags
 
 " Redefine the shell redirection operator to receive both the stderr messages and stdout messages
 set shellredir=>%s\ 2>&1
