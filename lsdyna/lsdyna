@@ -1,0 +1,10 @@
+#!/bin/sh
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo $DIR
+export LSTC_LICENSE=ansys
+export ANSYSLIC_DIR=$DIR/shared_files/licensing
+echo $ANSYSLIC_DIR
+
+eval "/home/hoan/opt/lsdyna_bin/ls-dyna_smp_d_r920_x64_redhat59_ifort131 $*"
+stat="$?"
+exit ${stat}
