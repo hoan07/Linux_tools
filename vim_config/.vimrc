@@ -15,7 +15,8 @@ endif
 call plug#end()
 
 set background=dark
-colorscheme gruvbox
+" colorscheme gruvbox
+colorscheme apprentice
 set guifont=DejaVu\ Sans\ Mono\ 13
 " /////////////////////////////////////////////////////////////////////////////
 " General

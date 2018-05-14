@@ -2,23 +2,22 @@
 " general plugins {{{
 
 Plug 'morhetz/gruvbox'
+Plug 'romainl/Apprentice'
 
-" Completion
-Plug 'prabirshrestha/asyncomplete.vim'
-imap <c-space> <Plug>(asyncomplete_force_refresh)
-let g:asyncomplete_remove_duplicates = 1
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
+" YouCompleteMe autocomplete
+" ---------------------------------------------------
+Plug 'Valloric/YouCompleteMe'
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_collect_identifiers_from_tags_files = 0
+let g:ycm_autoclose_preview_window_after_completion=1
+let g:ycm_python_binary_path = 'python'
+let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
 
-Plug 'prabirshrestha/asyncomplete-file.vim'
-au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-    \ 'name': 'file',
-    \ 'whitelist': ['*'],
-    \ 'priority': 10,
-    \ 'completor': function('asyncomplete#sources#file#completor')
-    \ }))
+map <F3> :YcmCompleter GoTo<cr>
+
+set tags=./tags,tags;
 
 " Vim buffer tab
 " ---------------------------------------------------
